@@ -1,8 +1,14 @@
-#!/usr/bin/env python
-
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
+from typing import List
+from pathlib import Path
+
+NAME = "{{cookiecutter.project_slug}}"
+PACKAGES = find_packages()
+META_PATH = Path("{{cookiecutter.project_slug}}") / "__init__.py"
+HERE = Path(__file__).absolute().parent
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -10,11 +16,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [{%- if cookiecutter.command_line_interface|lower == 'click' %}'Click>=7.0',{%- endif %} ]
+INSTALL_REQUIRES = (HERE/"requirements.txt").read_text().split("\n") # type: List[str]
 
-setup_requirements = [{%- if cookiecutter.use_pytest == 'y' %}'pytest-runner',{%- endif %} ]
+SETUP_REQUIRES = ['pytest-runner',]
 
-test_requirements = [{%- if cookiecutter.use_pytest == 'y' %}'pytest>=3',{%- endif %} ]
+TEST_REQUIRES = ['pytest>=3',]
 
 {%- set license_classifiers = {
     'MIT license': 'License :: OSI Approved :: MIT License',
@@ -45,11 +51,11 @@ setup(
     {%- if 'no' not in cookiecutter.command_line_interface|lower %}
     entry_points={
         'console_scripts': [
-            '{{ cookiecutter.project_slug }}={{ cookiecutter.project_slug }}.cli:main',
+            '{{ cookiecutter.project_cli }}={{ cookiecutter.project_slug }}.cli:main',
         ],
     },
     {%- endif %}
-    install_requires=requirements,
+    install_requires=INSTALL_REQUIRES,
 {%- if cookiecutter.open_source_license in license_classifiers %}
     license="{{ cookiecutter.open_source_license }}",
 {%- endif %}
@@ -58,9 +64,9 @@ setup(
     keywords='{{ cookiecutter.project_slug }}',
     name='{{ cookiecutter.project_slug }}',
     packages=find_packages(include=['{{ cookiecutter.project_slug }}', '{{ cookiecutter.project_slug }}.*']),
-    setup_requires=setup_requirements,
+    setup_requires=SETUP_REQUIRES,
     test_suite='tests',
-    tests_require=test_requirements,
+    tests_require=TEST_REQUIRES,
     url='https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}',
     version='{{ cookiecutter.version }}',
     zip_safe=False,
