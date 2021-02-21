@@ -7,14 +7,14 @@ Cookiecutter PyPackage
     :alt: Updates
 
 .. image:: https://travis-ci.org/ahasha/cookiecutter-pypackage.svg?branch=master
-    :target: https://travis-ci.org/ahasha/audreyfeldroy/cookiecutter-pypackage
+    :target: https://travis-ci.org/ahasha/cookiecutter-pypackage
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/cookiecutter-pypackage/badge/?version=latest
     :target: https://cookiecutter-pypackage.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-Cookiecutter_ template for a Python package.
+Cookiecutter_ template for a Python package. This was forked from: https://github.com/audreyr/cookiecutter-pypackage.
 
 * GitHub repo: https://github.com/ahasha/cookiecutter-pypackage/
 * Documentation: https://cookiecutter-pypackage.readthedocs.io/
@@ -23,12 +23,22 @@ Cookiecutter_ template for a Python package.
 Features
 --------
 
+Changes in fork reflect my preferences
+
+* Adding docopt cli option (not tested)
+* Removing unittest default in favor of pytest
+* Adding a setup script and conda environment file
+* Pulling setup script dependencies from requirements.txt by default
+* Adding style checkers to dev dependencies
+
+The following features are inherited from upstream
+
 * Testing setup ``pytest``
 * Travis-CI_: Ready for Travis Continuous Integration testing
 * Tox_ testing: Setup to easily test for Python 3.5, 3.6, 3.7, 3.8
 * Sphinx_ docs: Documentation ready for generation with, for example, `Read the Docs`_
 * bump2version_: Pre-configured version bumping with a single command
-* Command line interface using Click (optional) or Docopt (optional)
+* Command line interface using Click (optional)
 
 .. _Cookiecutter: https://github.com/cookiecutter/cookiecutter
 
@@ -131,6 +141,7 @@ make my own packaging experience better.
 .. _Poetry: https://python-poetry.org/
 .. _PyPi: https://pypi.python.org/pypi
 
+.. _`audreyfeldroy/cookiecutter-pypackage`_: https://github.com/audreyfeldroy/cookiecutter-pypackage
 .. _`Nekroze/cookiecutter-pypackage`: https://github.com/Nekroze/cookiecutter-pypackage
 .. _`tony/cookiecutter-pypackage-pythonic`: https://github.com/tony/cookiecutter-pypackage-pythonic
 .. _`ardydedase/cookiecutter-pypackage`: https://github.com/ardydedase/cookiecutter-pypackage
