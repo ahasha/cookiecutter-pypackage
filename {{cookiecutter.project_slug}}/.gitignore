@@ -103,3 +103,10 @@ ENV/
 
 # IDE settings
 .vscode/
+
+# data
+data/*
+!data/.gitkeep 
+
+# notebook
+notebook/.ipynb_checkpoints

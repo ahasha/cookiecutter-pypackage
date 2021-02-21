@@ -23,10 +23,30 @@ export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+export DOCKER=docker
+export PWD=`pwd`
+
+MODE ?= dev
+export JUPYTER_HOST_PORT ?= 8888
+export JUPYTER_CONTAINER_PORT ?= $(JUPYTER_HOST_PORT)
+export PROJECT_NAME={{ cookiecutter.project_slug }}
+export BASE_DOCKERFILE=docker/base/Dockerfile
+export DOCKERFILE=docker/$(MODE)/Dockerfile
+export BASE_IMAGE_NAME=$(PROJECT_NAME)-image-base
+export IMAGE_NAME=$(PROJECT_NAME)-$(MODE)-image
+export CONTAINER_NAME=$(PROJECT_NAME)-$(MODE)-container
+
+CURRENT_UID := $(shell id -u)
+CURRENT_GID := $(shell id -g)
+
+export CURRENT_UID
+export CURRENT_GID
+
+
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-docker ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -49,6 +69,7 @@ clean-test: ## remove test and coverage artifacts
 
 lint: ## check style with flake8
 	flake8 {{ cookiecutter.project_slug }} tests
+	mypy {{ cookiecutter.project_slug }}
 
 test: ## run tests quickly with the default Python
 	pytest
@@ -84,3 +105,27 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+init: init-docker sync-from-source ## initialize repository for traning
+
+sync-from-source: ## download data data source to local envrionment
+	@echo "Data sync from source not yet implemented..."
+
+init-docker: ## initialize docker image
+	$(DOCKER) build -t $(BASE_IMAGE_NAME) -f $(BASE_DOCKERFILE) --build-arg UID=$(shell id -u) .
+	$(DOCKER) build -t $(IMAGE_NAME) -f $(DOCKERFILE) .
+
+init-docker-no-cache: ## initialize docker image without cache
+	$(DOCKER) build --no-cache -t $(BASE_IMAGE_NAME) -f $(BASE_DOCKERFILE) --build-arg UID=$(shell id -u) .
+	$(DOCKER) build --no-cache -t $(IMAGE_NAME) -f $(DOCKERFILE) .
+
+create-container: ## create docker container
+	$(DOCKER) run -it -v $(PWD):/app -p $(JUPYTER_HOST_PORT):$(JUPYTER_CONTAINER_PORT) --name $(CONTAINER_NAME) $(IMAGE_NAME)
+
+clean-container: ## remove Docker container
+	-$(DOCKER) rm $(CONTAINER_NAME)
+
+clean-image: ## remove Docker image
+	-$(DOCKER) image rm $(IMAGE_NAME)
+
+clean-docker: clean-container clean-image ## remove Docker image and container
